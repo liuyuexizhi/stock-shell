@@ -8,7 +8,7 @@ function get_q_list() {
 		IFS=$'\n'
 		for each in $(cat stock.cnf)
 		do
-				[[ -z ${q_list} ]] && q_list=$(grep "${each}"'"$' data/all_* | awk -F '"' '{print $2}') || q_list=${q_list},$(grep "${each}"'"$' data/all_* | awk -F '"' '{print $2}')
+				[[ -z ${q_list} ]] && q_list=$(grep "${each}"'"$' data/all_*_list.txt | awk -F '"' '{print $2}') || q_list=${q_list},$(grep "${each}"'"$' data/all_*_list.txt | awk -F '"' '{print $2}')
 		done
 		IFS=$OLD_IFS
 
