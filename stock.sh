@@ -22,8 +22,8 @@ function print_info() {
     OLD_IFS=$IFS
     IFS=$'\n'
 		
-		echo "股票名称 当前价格 涨跌幅度 更新时间"
-		echo "-------- -------- -------- --------"
+		long_str="\033[37m 股票名称 当前价格 涨跌幅度 更新时间 \033[0m"
+		long_str="${long_str}\n\033[37m -------- -------- -------- -------- \033[0m"
     for line in $(cat temp.txt)
     do
         name=$(echo ${line} | awk -F '"' '{print $2}' | awk -F ',' '{print $1}')
@@ -32,8 +32,13 @@ function print_info() {
         now_time=$(echo ${line} | awk -F '"' '{print $2}' | awk -F ',' '{if ($(NF-1)=='00'){ print $(NF-2) } else { print $(NF-1)} }')
         percent=$(echo """scale=3;result=(${now_price}-${last_price})/${last_price}*100;if (result < 0) {if (length(result)==scale(result)) {print "-0";print -result} else { print result}} else {if (length(result)==scale(result)) {print 0;print result} else {print result}}""" | bc)
         [[ "${percent}" =~ '-' ]] || percent="+${percent}"
-        echo "`echo ${name} | sed 's/ //g'` ${now_price} ${percent}% ${now_time}"
+
+        info="`echo ${name} | sed 's/ //g'` ${now_price} ${percent}% ${now_time}"
+				[[ "${percent}" =~ '-' ]] && \
+					long_str="${long_str}\n\033[32m ${info} \033[0m" || \
+					long_str="${long_str}\n\033[31m ${info} \033[0m"
     done
+		echo -ne "${long_str}"
     IFS=$OLD_IF
 }
 
