@@ -30,7 +30,8 @@ function print_info() {
         last_price=$(echo ${line} | awk -F '"' '{print $2}' | awk -F ',' '{print $3}')
         now_price=$(echo ${line} | awk -F '"' '{print $2}' | awk -F ',' '{print $4}')
         now_time=$(echo ${line} | awk -F '"' '{print $2}' | awk -F ',' '{if ($(NF-1)=='00'){ print $(NF-2) } else { print $(NF-1)} }')
-        percent=$(echo """scale=3;result=(${now_price}-${last_price})/${last_price}*100;if (result < 0) {if (length(result)==scale(result)) {print "-0";print -result} else { print result}} else {if (length(result)==scale(result)) {print 0;print result} else {print result}}""" | bc)
+        percent=$(echo """scale=3;result=(${now_price}-${last_price})/${last_price}*100;if (result < 0) {if (length(result)==scale(result)) {print -99;print -result} else if (result == 0) {print result} else { print result}} else {if (length(result)==scale(result)) {print 0;print result} else {print result}}""" | bc)
+        percent=$(echo "${percent}" | sed "s@^-99\.@-0\.@")
         [[ "${percent}" =~ '-' ]] || percent="+${percent}"
 
         info="`echo ${name} | sed 's/ //g'` ${now_price} ${percent}% ${now_time}"
